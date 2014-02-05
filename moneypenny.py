@@ -24,7 +24,6 @@ import requests
 import string
 
 app = Flask(__name__)
-app.debug = True
 config = RawConfigParser()
 config.read("moneypenny.ini")
 
