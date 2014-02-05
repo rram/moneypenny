@@ -53,9 +53,6 @@ location_db = {}
 for short, info in config.items("locations"):
     location_db[short] = map(string.strip, info.split(","))
 
-# Moneypenny
-default_img_url = config.get("moneypenny", "default_image_url")
-
 def constant_time_compare(actual, expected):
     """
     Returns True if the two strings are equal, False otherwise
@@ -123,18 +120,19 @@ def visitor(location):
         )
         img_url = "http://s3.amazonaws.com/{}".format(keyname)
     else:
-        app.logger.debug("Got status code of %i, using default image",
+        app.logger.debug("Got status code of %i, not using image",
                 r.status_code)
-        img_url = default_img_url
+        img_url = None
 
     title = link_format.format(
                 d=date,
                 location=loc_info[0],
                 visitor_name=visitor_name
             )
-    # Note: I've patched PRAW to pass along the resubmit parameter in order to
-    # prevent it from raising an AlreadySubmitted exception.
-    s = sr.submit(title, url=img_url, raise_captcha_exception=True, resubmit=True)
+
+    # NOTE: I've modified praw to treat text == '' as a self post with no text
+    text = '' if img_url is None else None
+    s = sr.submit(title, text=text, url=img_url, raise_captcha_exception=True)
     if isinstance(s, basestring):
         return s
     else:
