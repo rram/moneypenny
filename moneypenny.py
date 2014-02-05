@@ -114,11 +114,14 @@ def visitor(location):
         s3 = boto.connect_s3(s3_key_id, s3_secret_key)
         keyname = "{}/{}.jpg".format(location, entry["id"])
         bucket = s3.get_bucket(s3_bucket)
-        key = boto.s3.key.Key(bucket)
-        key.key = "{}.jpg".format(entry["id"])
-        key.set_metadata("Content-Type", "image/jpeg")
-        key.set_contents_from_file(r.raw)
-        key.set_acl("public-read")
+        key = bucket.new_key(keyname)
+        key.set_contents_from_file(
+            r.raw,
+            headers={
+                "Content-Type": "image/jpeg",
+            },
+            policy="public-read"
+        )
         img_url = "http://s3.amazonaws.com/{}".format(keyname)
     else:
         app.logger.debug("Got status code of %i, using default image",
