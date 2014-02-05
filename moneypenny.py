@@ -55,7 +55,7 @@ for short, info in config.items("locations"):
     location_db[short] = map(string.strip, info.split(","))
 
 # Moneypenny
-default_img_url = config.get("DEFAULT", "default_image_url")
+default_img_url = config.get("moneypenny", "default_image_url")
 
 # Taken from http://documentation.mailgun.com/user_manual.html#webhooks
 def verify_message(token, timestamp, signature):

@@ -34,7 +34,7 @@ s3_bucket =
 # short_code = Long Name, timezone
 sfo = San Francisco, America/Los_Angeles
 
-[DEFAULT]
+[moneypenny]
 # Should getting the image from envoy fail, we'll use this URL instead
 default_image_url =
 ```
