@@ -57,12 +57,27 @@ for short, info in config.items("locations"):
 # Moneypenny
 default_img_url = config.get("moneypenny", "default_image_url")
 
-# Taken from http://documentation.mailgun.com/user_manual.html#webhooks
+def constant_time_compare(actual, expected):
+    """
+    Returns True if the two strings are equal, False otherwise
+
+    The time taken is dependent on the number of characters provided
+    instead of the number of characters that match.
+    """
+    actual_len   = len(actual)
+    expected_len = len(expected)
+    result = actual_len ^ expected_len
+    if expected_len > 0:
+        for i in xrange(actual_len):
+            result |= ord(actual[i]) ^ ord(expected[i % expected_len])
+    return result == 0
+
 def verify_message(token, timestamp, signature):
-    return signature == hmac.new(
-            key=api_key,
-            msg="{}{}".format(timestamp, token),
-            digestmod=hashlib.sha256).hexdigest()
+    expected = hmac.new(
+                key=api_key,
+                msg="{}{}".format(timestamp, token),
+                digestmod=hashlib.sha256).hexdigest()
+    return constant_time_compare(signature, expected)
 
 @app.route("/")
 def health():
