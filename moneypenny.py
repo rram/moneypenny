@@ -39,7 +39,6 @@ if config.has_option("aws", "s3_key_id"):
     s3_key_id = config.get("aws", "s3_key_id")
     s3_secret_key = config.get("aws", "s3_secret_key")
 s3_bucket = config.get("aws", "s3_bucket")
-s3 = boto.connect_s3(s3_key_id, s3_secret_key)
 
 # reddit
 username = config.get("reddit", "username")
@@ -97,6 +96,7 @@ def visitor(location):
     # Copy the image from Envoy to our own S3 bucket
     r = requests.get(entry['photo_url'], stream=True)
     if r.status_code == 200:
+        s3 = boto.connect_s3(s3_key_id, s3_secret_key)
         keyname = "{}/{}.jpg".format(location, entry["id"])
         bucket = s3.get_bucket(s3_bucket)
         key = boto.s3.key.Key(bucket)
