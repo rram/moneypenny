@@ -8,7 +8,6 @@ Requirements:
     * PRAW library (https://github.com/praw-dev/praw/)
 """
 
-from babel.dates import format_datetime
 from ConfigParser import RawConfigParser
 from datetime import datetime
 from string import Template
@@ -44,7 +43,7 @@ s3_bucket = config.get("aws", "s3_bucket")
 username = config.get("reddit", "username")
 password = config.get("reddit", "password")
 subreddit = config.get("reddit", "subreddit")
-link_format = Template(config.get("reddit", "link_format"))
+link_format = config.get("reddit", "link_format")
 r = praw.Reddit(user_agent="Mrs. Moneypenny by /u/rram")
 r.login(username, password)
 sr = r.get_subreddit(subreddit)
@@ -128,8 +127,8 @@ def visitor(location):
                 r.status_code)
         img_url = default_img_url
 
-    title = link_format.substitute(
-                date=format_datetime(date, locale='en_US'),
+    title = link_format.format(
+                d=date,
                 location=loc_info[0],
                 visitor_name=visitor_name
             )

@@ -10,7 +10,6 @@ will post visitors name and photos to
 * [PRAW](https://praw.readthedocs.org)
 * [pytz](http://pytz.sourceforge.net/)
 * [boto (>=2.6.0)](http://boto.cloudhackers.com/)
-* [babel](http://babel.pocoo.org/)
 
 # Configuration
 ```ini
@@ -24,8 +23,8 @@ subreddit =
 # Formating replacements:
 #  ${location}
 #  ${visitor_name}
-#  ${date}
-link_format = ${visitor_name} on ${date}
+#  ${d} - datetime object
+link_format = {visitor_name} on {d:%b} {d.day} {d.year}
 
 [aws]
 s3_bucket = 
