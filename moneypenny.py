@@ -117,7 +117,7 @@ def visitor(location):
             },
             policy="public-read"
         )
-        img_url = "http://s3.amazonaws.com/{}".format(keyname)
+        img_url = "http://s3.amazonaws.com/{}/{}".format(s3_bucket, keyname)
     else:
         app.logger.debug("Got status code of %i, not using image",
                 r.status_code)
