@@ -133,8 +133,10 @@ def visitor(location):
     text = '' if img_url is None else None
     s = sr.submit(title, text=text, url=img_url, raise_captcha_exception=True)
     if isinstance(s, basestring):
+        app.logger.debug("Posted to %s", s)
         return s
     else:
+        app.logger.debug("Posted to %s", s.short_link)
         return s.short_link
 
 
