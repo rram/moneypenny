@@ -108,7 +108,7 @@ def visitor(location):
     if r.status_code == 200:
         s3 = boto.connect_s3(s3_key_id, s3_secret_key)
         keyname = "{}/{}.jpg".format(location, entry["id"])
-        bucket = s3.get_bucket(s3_bucket)
+        bucket = s3.get_bucket(s3_bucket, validate=False)
         key = bucket.new_key(keyname)
         key.set_contents_from_file(
             r.raw,
