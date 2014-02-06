@@ -110,8 +110,8 @@ def visitor(location):
         keyname = "{}/{}.jpg".format(location, entry["id"])
         bucket = s3.get_bucket(s3_bucket, validate=False)
         key = bucket.new_key(keyname)
-        key.set_contents_from_file(
-            r.raw,
+        key.set_contents_from_string(
+            r.content,
             headers={
                 "Content-Type": "image/jpeg",
             },
