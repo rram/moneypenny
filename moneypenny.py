@@ -49,8 +49,11 @@ sr = r.get_subreddit(subreddit)
 
 # locations
 location_db = {}
+City = collections.namedtuple("City", ["name", "timezone", "code"])
 for short, info in config.items("locations"):
-    location_db[short] = map(string.strip, info.split(","))
+    data = map(string.strip, info.split(","))
+    data.append(short)
+    location_db[short] = City(*data)
 
 def constant_time_compare(actual, expected):
     """
@@ -107,7 +110,7 @@ def visitor(location):
     r = requests.get(entry['photo_url'], stream=True)
     if r.status_code == 200:
         s3 = boto.connect_s3(s3_key_id, s3_secret_key)
-        keyname = "{}/{}.jpg".format(location, entry["id"])
+        keyname = "{}/{}.jpg".format(loc_info.code, entry["id"])
         bucket = s3.get_bucket(s3_bucket, validate=False)
         key = bucket.new_key(keyname)
         key.set_contents_from_string(
