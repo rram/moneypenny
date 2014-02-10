@@ -23,9 +23,11 @@ import pytz
 import requests
 import string
 
+CONFIG_FILE="moneypenny.ini"
+
 app = Flask(__name__)
 config = RawConfigParser()
-config.read("moneypenny.ini")
+config.read(CONFIG_FILE)
 
 # Envoy
 api_key = config.get("envoy", "api_key")
@@ -54,6 +56,18 @@ for short, info in config.items("locations"):
     data = map(string.strip, info.split(","))
     data.append(short)
     location_db[short] = City(*data)
+
+# https://github.com/spladug/wessex
+irc_channel = None
+message_format = None
+try:
+    import wessex
+    if config.has_section("harold"):
+        harold = wessex.connect_harold(["/etc/harold.ini", CONFIG_FILE])
+        irc_channel = harold.get_irc_channel(config.get("harold", "channel"))
+        message_format = config.get("harold", "message_format")
+except ImportError:
+    pass
 
 def constant_time_compare(actual, expected):
     """
@@ -128,19 +142,30 @@ def visitor(location):
 
     title = link_format.format(
                 d=date,
-                location=loc_info[0],
+                location=loc_info,
                 visitor_name=visitor_name
             )
 
     # NOTE: I've modified praw to treat text == '' as a self post with no text
     text = '' if img_url is None else None
     s = sr.submit(title, text=text, url=img_url, raise_captcha_exception=True)
+    link = "Something went wrong here"
     if isinstance(s, basestring):
         app.logger.debug("Posted to %s", s)
-        return s
+        link = s
     else:
         app.logger.debug("Posted to %s", s.short_link)
-        return s.short_link
+        link = s.short_link
+
+    if irc_channel:
+        message = message_format.format(
+            d=date,
+            location=loc_info,
+            visitor_name=visitor_name,
+            link=link,
+        )
+        irc_channel.message(message)
+    return link
 
 
 if __name__ == "__main__":
