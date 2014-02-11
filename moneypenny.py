@@ -10,10 +10,10 @@ Requirements:
 
 from ConfigParser import RawConfigParser
 from datetime import datetime
-from string import Template
 import hashlib
 import hmac
 import json
+import string
 
 from flask import Flask, abort, request
 import boto
@@ -21,7 +21,6 @@ import collections
 import praw
 import pytz
 import requests
-import string
 
 CONFIG_FILE="moneypenny.ini"
 
