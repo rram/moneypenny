@@ -113,10 +113,9 @@ def visitor(location):
 
     entry = json.loads(entry)
 
-    date = entry.get("signed_in_time_utc")
+    date = entry.get("signed_in_time_local")
     date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-    date = date.replace(tzinfo=pytz.UTC)
-    date = date.astimezone(pytz.timezone(loc_info[1]))
+    date = date.replace(tzinfo=pytz.timezone(loc_info[1]))
     visitor_name = entry.get("your_full_name")
 
     # Copy the image from Envoy to our own S3 bucket
